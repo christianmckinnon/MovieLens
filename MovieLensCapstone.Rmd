@@ -2,7 +2,9 @@
 title: "MovieLens HarvardX Capstone Project"
 author: "Christian McKinnon"
 date: "6/17/2020"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 urlcolor: blue
 linkcolor: blue
 ---
@@ -23,6 +25,7 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE)
   
 |       The dataset, titled "MovieLens," was developed by researchers at the University of Minnesota and was designed to generate personalized film recommendations. According to GroupLens, the December 2019 release contains over 25 million ratings and 1 million tag applications applied to 62,000 movies and 162,000 users. For the academic purposes of this course, we will be exploring the "MovieLens 10M Dataset."
 
+[My Github Repo](https://github.com/christianmckinnon/MovieLens)
 
 # Methods and Analysis:
 |       First, we will begin by preparing the data and loading it from the [GroupLens Website](https://grouplens.org/datasets/movielens/10m/). The data will initially be split into datasets titled "edx" and "validation" before being further partitioned into training and test sets. A preliminary exploratory analysis will be conducted to examine each of the features of the dataset to determine potential "biases" that may confound and reduce the predictive accuracy of our models.
@@ -131,27 +134,29 @@ Let's visually interpret the distribution of the number of ratings by users:
 edx %>% group_by(userId) %>% summarize(n_ratings = n()) %>% 
  ggplot(aes(n_ratings))+
   geom_histogram(fill = "slategray3", color = "black", bins = 35)+
-    scale_x_log10()+
-      ggtitle("User Distribution")+
-        xlab("Ratings")+
-          ylab("Users")+
-            theme_solarized_2(light = F)+
-              theme(plot.title = element_text(hjust = 0.5))
+  scale_x_log10()+
+  ggtitle("User Distribution")+
+  xlab("Ratings")+
+  ylab("Users")+
+  theme_solarized_2(light = F)+
+  theme(plot.title = element_text(hjust = 0.5))
 ```
+
 It is clear that most users rate a fewer number of films and that the distribution is right skewed.
 
 # Movies: Now we will examine the Distribution of Ratings vs Movies
 ```{r echo=FALSE}
 edx %>% group_by(movieId) %>% summarize(n_ratings = n()) %>% 
   ggplot(aes(n_ratings))+
-    geom_histogram(fill = "slategray3", color = "black", bins = 35)+
-      scale_x_log10()+
-        ggtitle("Movies Distribution")+
-          xlab("Ratings")+
-            ylab("Movies")+
-              theme_solarized_2(light = F)+
-                theme(plot.title = element_text(hjust = 0.5))
+  geom_histogram(fill = "slategray3", color = "black", bins = 35)+
+  scale_x_log10()+
+  ggtitle("Movies Distribution")+
+  xlab("Ratings")+
+  ylab("Movies")+
+  theme_solarized_2(light = F)+
+  theme(plot.title = element_text(hjust = 0.5))
 ```
+
 The distribution appears to be nearly symmetric which is logical as more popular films tend to be rated more frequently than less popular films. The fact that there are a number of films with fewer ratings implies potential biases may affect our recommendation system.
 
 # Ratings:
@@ -170,17 +175,18 @@ sort(unique_ratings)
 edx %>% group_by(rating) %>% summarize(ratings_sum = n()) %>%
   arrange(desc(ratings_sum))
 ```
+
 A rating of "4" is the most popular rating while 0.5 is awarded the least frequently.
 
 # Examine the distribution visually
 ```{r echo = FALSE}
 edx %>% ggplot(aes(rating))+
   geom_histogram(fill = "slategray3", color = "black", bins = 35)+
-    ggtitle("Ratings Distribution")+
-      xlab("Rating Awarded")+
-        ylab("Total Sum of Ratings")+
-          theme_solarized_2(light = F)+
-            theme(plot.title = element_text(hjust = 0.5))
+  ggtitle("Ratings Distribution")+
+  xlab("Rating Awarded")+
+  ylab("Total Sum of Ratings")+
+  theme_solarized_2(light = F)+
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 The histogram confirms most viewers tended to award a 3 or above.
@@ -244,11 +250,11 @@ str(edx)
 ```{r echo = FALSE}
 edx %>% ggplot(aes(RatingYear))+
   geom_histogram(fill = "slategray3", color = "black", bins = 35)+
-      ggtitle("User Distribution")+
-        xlab("Year")+
-          ylab("Users")+
-            theme_solarized_2(light = F)+
-              theme(plot.title = element_text(hjust = 0.5))
+  ggtitle("User Distribution")+
+  xlab("Year")+
+  ylab("Users")+
+  theme_solarized_2(light = F)+
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 We observe that 1996, 2000 and 2005 are the years in which most films were rated.
@@ -321,11 +327,11 @@ class(edx_genres$genres)
 sr_bar <-edx_genres %>% group_by(genres) %>% summarize(Ratings_Sum = n())
 sr_bar %>% ggplot(aes(x = reorder(genres, Ratings_Sum), y = Ratings_Sum))+
   geom_bar(stat = "identity",  fill = "slategray3", color = "black")+
-    ggtitle("Genre Distribution")+
-      xlab("Genres")+
-        ylab("Sum of Ratings")+
-          coord_flip()+
-            theme_solarized_2(light = F)+
+  ggtitle("Genre Distribution")+
+  xlab("Genres")+
+  ylab("Sum of Ratings")+
+  coord_flip()+
+  theme_solarized_2(light = F)+
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
@@ -335,12 +341,12 @@ ar_bar <-edx_genres %>% group_by(genres) %>% summarize(avg_rating = mean(rating)
   arrange(-avg_rating)
 ar_bar %>% ggplot(aes(x = reorder(genres, avg_rating), y = avg_rating))+
     geom_bar(stat = "identity", fill = "slategray3", color = "black")+
-      ggtitle("Mean Rating by Genre")+
-        xlab("Genres")+
-          ylab("Mean Rating")+
-            coord_flip()+
-              theme_solarized_2(light = F)+
-                theme(plot.title = element_text(hjust = 0.5))
+    ggtitle("Mean Rating by Genre")+
+    xlab("Genres")+
+    ylab("Mean Rating")+
+    coord_flip()+
+    theme_solarized_2(light = F)+
+    theme(plot.title = element_text(hjust = 0.5))
 ```
 
 The visualization confirms most genres were given a rating between a 3 and 4 with Film Noir at the top and Horror at the bottom.
@@ -387,13 +393,13 @@ summary(edx$MovieAge)
 ```{r echo = FALSE}
 edx %>% group_by(MovieAge) %>% summarize(Avg_MR = mean(rating)) %>% 
   ggplot(aes(MovieAge, Avg_MR))+
-    geom_point(color = "slategray3")+
-      geom_smooth(method = "loess")+
-        ggtitle("Movie Age & Average Rating")+
-          xlab("Movie Age")+
-            ylab("Mean Rating")+
-              theme_solarized_2(light = F)+
-                theme(plot.title = element_text(hjust = 0.5))
+  geom_point(color = "slategray3")+
+  geom_smooth(method = "loess")+
+  ggtitle("Movie Age & Average Rating")+
+  xlab("Movie Age")+
+  ylab("Mean Rating")+
+  theme_solarized_2(light = F)+
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 It is apparent that there is a positive correlation between the two features as evidenced by the generally positive slope of the line of best fit. This could be the result of users awarding higher ratings to films that tend to be older and are often regarded as "classics." As a result, we can infer including Movie Age Effects could meaningfully augment our modeling.
@@ -464,11 +470,11 @@ bi <- edx_train %>% group_by(movieId) %>%
 ```{r, echo = FALSE}
 bi %>% ggplot(aes(b_i))+
   geom_histogram(fill = "slategray3", color = "black", bins = 35)+
-    ggtitle("Movie Effects Distribution")+
-      xlab("Effects")+
-        ylab("Count")+
-          theme_solarized_2(light = F)+
-            theme(plot.title = element_text(hjust = 0.5))
+  ggtitle("Movie Effects Distribution")+
+  xlab("Effects")+
+  ylab("Count")+
+  theme_solarized_2(light = F)+
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 
@@ -504,11 +510,11 @@ bu <-edx_train %>% left_join(bi, by = "movieId") %>% group_by(userId) %>%
 ```{r, echo = FALSE}
 bu %>% ggplot(aes(b_u))+
   geom_histogram(fill = "slategray3", color = "black", bins = 35)+
-    ggtitle("User Effects Distribution")+
-      xlab("Effects")+
-        ylab("Count")+
-          theme_solarized_2(light = F)+
-            theme(plot.title = element_text(hjust = 0.5))
+  ggtitle("User Effects Distribution")+
+  xlab("Effects")+
+  ylab("Count")+
+  theme_solarized_2(light = F)+
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 The data appears to be nearly normally distributed.
@@ -547,11 +553,11 @@ ba <- edx_train %>%
 ```{r echo = FALSE}
 ba %>% ggplot(aes(b_a))+
   geom_histogram(fill = "slategray3", color = "black", bins = 35)+
-    ggtitle("Movie Age Distribution")+
-      xlab("Effects")+
-        ylab("Count")+
-          theme_solarized_2(light = F)+
-            theme(plot.title = element_text(hjust = 0.5))
+  ggtitle("Movie Age Distribution")+
+  xlab("Effects")+
+  ylab("Count")+
+  theme_solarized_2(light = F)+
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 The range of the distribution is much wider with denser clusters between 0 & 0.5 and outliers around .20.
